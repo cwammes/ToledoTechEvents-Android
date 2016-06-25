@@ -31,7 +31,7 @@ public class EventsDAO {
         URL url;
 
         HttpURLConnection connection = null;
-System.out.println("urlStr: " + urlStr);
+//Log.d(TAG, "urlStr: " + urlStr);
         try{
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
@@ -58,6 +58,7 @@ System.out.println("ArrayList Size: " + eventList.size());
 
         ArrayList<Event> eventList = new ArrayList<Event>();
 
+        //Log.d(TAG, "Start iCal4j");
         try {
             CalendarBuilder builder = new CalendarBuilder();
             Calendar calendar = builder.build(is);
@@ -74,12 +75,17 @@ System.out.println("ArrayList Size: " + eventList.size());
                     if(property.getName().matches("DESCRIPTION")){
                         event.setDescription(property.getValue());
                     }
-/*
+
                     else if(property.getName().matches("DTEND")){
 
-                        event.setEndTime(new Date(property.getValue()));
+                        event.setEndTime(new Date());
                     }
-*/
+
+                    else if(property.getName().matches("DTSTART")){
+
+                        event.setStartTime(new Date());
+                    }
+
                     else if(property.getName().matches("URL")){
 
                         try {
