@@ -74,15 +74,19 @@ Log.d(TAG, "ArrayList Size: " + eventList.size());
                 Event myEvent = new Event();
                 VEvent event = ical.getEvents().get(x);
 
-                myEvent.setDescription(event.getDescription().getValue().substring(0, 25));
+                myEvent.setDescription(event.getDescription().getValue());
                 myEvent.setSummary(event.getSummary().getValue());
                 myEvent.setLocation(event.getLocation().getValue());
                 myEvent.setStartTime(event.getDateStart().getValue());
-                myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
+                if(event.getLocation().getValue().indexOf(":") > 0)
+                    myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
+                else
+                    myEvent.setLocationShort("");
 
                 //System.out.println("myEvent.getDescription(): " + myEvent.getDescription());
                 //System.out.println("myEvent.getSummary():" + myEvent.getSummary());
                 //System.out.println("myEvent.getStartTime(): " + myEvent.getStartTime());
+
                 eventList.add(myEvent);
             }
 

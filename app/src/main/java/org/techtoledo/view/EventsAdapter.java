@@ -13,6 +13,10 @@ import toledotechevets.org.toledotech.R;
 
 import org.techtoledo.domain.Event;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
@@ -26,7 +30,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             location = (TextView) view.findViewById(R.id.location);
-            date = (TextView) view.findViewById(R.id.year);
+            date = (TextView) view.findViewById(R.id.date);
         }
     }
 
