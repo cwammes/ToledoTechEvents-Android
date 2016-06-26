@@ -15,6 +15,16 @@ public class Event {
     String summary;
     String location;
     String locationShort;
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
+    String locationAddress;
     URL eventURL;
 
     public Date getStartTime() {

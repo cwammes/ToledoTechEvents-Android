@@ -78,11 +78,26 @@ Log.d(TAG, "ArrayList Size: " + eventList.size());
                 myEvent.setSummary(event.getSummary().getValue());
                 myEvent.setLocation(event.getLocation().getValue());
                 myEvent.setStartTime(event.getDateStart().getValue());
-                if(event.getLocation().getValue().indexOf(":") > 0)
-                    myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
-                else
-                    myEvent.setLocationShort("");
 
+                //Get Location Info
+                if(event.getLocation().getValue().indexOf(":") > 0) {
+                    myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
+                    myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":"), event.getLocation().getValue().length()));
+                }
+                else {
+                    myEvent.setLocationShort("");
+                    myEvent.setLocationAddress("");
+                }
+
+                //Get URL
+                if(event.getUrl() != null){
+                    myEvent.setEventURL(new URL(event.getUrl().getValue()));
+                }
+                else{
+                    //myEvent.setEventURL(new URL(""));
+                }
+
+                //System.out.println("event.getUrl(): " + event.getUrl().getValue());
                 //System.out.println("myEvent.getDescription(): " + myEvent.getDescription());
                 //System.out.println("myEvent.getSummary():" + myEvent.getSummary());
                 //System.out.println("myEvent.getStartTime(): " + myEvent.getStartTime());
