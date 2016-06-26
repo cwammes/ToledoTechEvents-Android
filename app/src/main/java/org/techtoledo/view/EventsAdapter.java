@@ -20,12 +20,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     private List<Event> eventList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, description, date;
+        public TextView title, location, date;
 
         public MyViewHolder(View view) {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
-            description = (TextView) view.findViewById(R.id.genre);
+            location = (TextView) view.findViewById(R.id.location);
             date = (TextView) view.findViewById(R.id.year);
         }
     }
@@ -47,7 +47,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.title.setText(event.getSummary());
-        holder.description.setText(event.getDescription());
+        holder.location.setText(event.getLocationShort());
         holder.date.setText(event.getStartTime().toString());
     }
 

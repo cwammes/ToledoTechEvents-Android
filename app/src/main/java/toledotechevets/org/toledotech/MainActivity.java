@@ -1,5 +1,6 @@
 package toledotechevets.org.toledotech;
 
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +14,7 @@ import org.techtoledo.view.EventsAdapter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,14 +22,19 @@ public class MainActivity extends AppCompatActivity {
     private EventsDAO eventsDAO = new EventsDAO();
     private RecyclerView recyclerView;
     private EventsAdapter eAdapter;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //eventList = eventsDAO.getEventList();
-        eventList = loadEvents();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        eventList = eventsDAO.getEventList();
+        //eventList = loadEvents();
+        Log.d(TAG, "Integer.toString(eventList.size()): " + Integer.toString(eventList.size()));
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 

@@ -14,6 +14,7 @@ public class Event {
     String description;
     String summary;
     String location;
+    String locationShort;
     URL eventURL;
 
     public Date getStartTime() {
@@ -71,4 +72,8 @@ public class Event {
     public void setEventURL(URL eventURL) {
         this.eventURL = eventURL;
     }
+
+    public String getLocationShort() {return locationShort;}
+
+    public void setLocationShort(String locationShort) {this.locationShort = locationShort;}
 }
