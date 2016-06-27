@@ -25,6 +25,10 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/services/org.codehaus.groovy.runtime.ExtensionModule'
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {

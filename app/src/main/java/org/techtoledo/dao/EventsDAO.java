@@ -28,7 +28,7 @@ public class EventsDAO {
         URL url;
 
         HttpURLConnection connection = null;
-Log.d(TAG, "urlStr: " + urlStr);
+        Log.d(TAG, "urlStr: " + urlStr);
         try{
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
@@ -36,7 +36,7 @@ Log.d(TAG, "urlStr: " + urlStr);
 
             InputStream is = connection.getInputStream();
             eventList = setEventList(is);
-Log.d(TAG, "ArrayList Size: " + eventList.size());
+            Log.d(TAG, "ArrayList Size: " + eventList.size());
         }
         catch(Exception e){
             Log.e(TAG, "Error");
@@ -65,11 +65,10 @@ Log.d(TAG, "ArrayList Size: " + eventList.size());
             }
             rd.close();
             String str =  result.toString();
-            //System.out.println(str);
 
             ICalendar ical = Biweekly.parse(str).first();
 
-            System.out.println("ical.getEvents().size():" + ical.getEvents().size());
+            Log.e(TAG, "ical.getEvents().size():" + ical.getEvents().size());
             for(int x = 0; x < ical.getEvents().size(); x++){
                 Event myEvent = new Event();
                 VEvent event = ical.getEvents().get(x);
@@ -85,7 +84,7 @@ Log.d(TAG, "ArrayList Size: " + eventList.size());
                     myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":"), event.getLocation().getValue().length()));
                 }
                 else {
-                    myEvent.setLocationShort("");
+                    myEvent.setLocationShort("TBD");
                     myEvent.setLocationAddress("");
                 }
 
@@ -96,11 +95,6 @@ Log.d(TAG, "ArrayList Size: " + eventList.size());
                 else{
                     //myEvent.setEventURL(new URL(""));
                 }
-
-                //System.out.println("event.getUrl(): " + event.getUrl().getValue());
-                //System.out.println("myEvent.getDescription(): " + myEvent.getDescription());
-                //System.out.println("myEvent.getSummary():" + myEvent.getSummary());
-                //System.out.println("myEvent.getStartTime(): " + myEvent.getStartTime());
 
                 eventList.add(myEvent);
             }
