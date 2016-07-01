@@ -4,7 +4,9 @@ package org.techtoledo.view;
  * Created by cwammes on 6/22/16.
  */
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import toledotechevets.org.toledotech.R;
 
 import android.util.Log;
 
+import org.techtoledo.activies.EventDetails;
 import org.techtoledo.domain.Event;
 
 import java.text.DateFormat;
@@ -30,9 +33,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView title, location, date;
+        private final Context context;
 
         public MyViewHolder(View view) {
             super(view);
+            context = view.getContext();
             title = (TextView) view.findViewById(R.id.title);
             location = (TextView) view.findViewById(R.id.location);
             date = (TextView) view.findViewById(R.id.date);
@@ -46,17 +51,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
 
             Event event = eventList.get(getAdapterPosition());
             Log.d(TAG, event.getSummary());
-            final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-            builder.setTitle (event.getSummary())
-                    .setMessage (event.getStartTime() + "\n\nMore Information:\n" +  "\n\n" + event.getDescription())
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    });
+            final Intent intent = new Intent(context, EventDetails.class);
+            intent.putExtra("Event", event);
 
-            builder.create().show();
+            context.startActivity(intent);
         }
     }
 

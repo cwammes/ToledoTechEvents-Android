@@ -1,12 +1,13 @@
 package org.techtoledo.domain;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
 /**
  * Created by cwammes on 6/17/16.
  */
-public class Event {
+public class Event implements Serializable {
 
     Date startTime;
     Date endTime;
