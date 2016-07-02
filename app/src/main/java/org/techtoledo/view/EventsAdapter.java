@@ -76,13 +76,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.title.setText(event.getSummary());
-        if(!event.getLocation().isEmpty()) {
-            holder.location.setText(event.getLocationShort());
-        }
-        else{
-            holder.location.setText("TBD");
-        }
-        holder.date.setText(event.getStartTime().toString());
+        holder.location.setText(event.getLocationShort());
+
+        //Format the Date
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE MMMM d, yyyy h:mm aa");
+        holder.date.setText(sdf.format(event.getStartTime()).toString());
 
     }
 
