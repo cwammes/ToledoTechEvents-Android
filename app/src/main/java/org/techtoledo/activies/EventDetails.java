@@ -26,8 +26,9 @@ public class EventDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setTitle("Toledo Tech Events");
+        //setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
         Event event = (Event)intent.getSerializableExtra("Event");

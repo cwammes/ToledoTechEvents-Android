@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="#8dc641"
+    android:id="@+id/toolbar"
+    android:elevation="4dp">
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toledo Tech Events"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        />
+
+</android.support.v7.widget.Toolbar>
