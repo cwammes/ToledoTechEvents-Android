@@ -17,7 +17,7 @@ import org.techtoledo.domain.Event;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class EventDetails extends AppCompatActivity {
+public class EventDetails extends DefaultActivity {
 
     private static final String TAG = "EventDetails";
 

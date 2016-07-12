@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import org.techtoledo.activies.AboutTechToledo;
+import org.techtoledo.activies.DefaultActivity;
 import org.techtoledo.dao.EventsDAO;
 import org.techtoledo.domain.Event;
 import org.techtoledo.view.EventsAdapter;
@@ -21,7 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DefaultActivity {
 
     private List<Event> eventList = new ArrayList<>();
     private EventsDAO eventsDAO = new EventsDAO();
@@ -48,12 +49,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(eAdapter);
-    }
-
-    public void aboutEvent(View view)
-    {
-        Intent intent = new Intent(MainActivity.this, AboutTechToledo.class);
-        startActivity(intent);
     }
 
     private ArrayList<Event> loadEvents(){
