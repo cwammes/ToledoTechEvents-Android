@@ -1,5 +1,6 @@
 package toledotechevets.org.toledotech;
 
+import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import org.techtoledo.activies.AboutTechToledo;
 import org.techtoledo.dao.EventsDAO;
 import org.techtoledo.domain.Event;
 import org.techtoledo.view.EventsAdapter;
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(eAdapter);
+    }
+
+    public void aboutEvent(View view)
+    {
+        Intent intent = new Intent(MainActivity.this, AboutTechToledo.class);
+        startActivity(intent);
     }
 
     private ArrayList<Event> loadEvents(){
