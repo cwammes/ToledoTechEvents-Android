@@ -31,8 +31,7 @@ public class AboutTechToledo extends DefaultActivity {
     {
         //End Activity
         Log.d(TAG, "End About Activity");
-        this.finish();
-
+        finish();
     }
 
 }
