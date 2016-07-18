@@ -1,14 +1,11 @@
 package toledotechevets.org.toledotech;
 
-import android.content.Intent;
 import android.os.StrictMode;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import org.techtoledo.activies.AboutTechToledo;
 import org.techtoledo.activies.DefaultActivity;
 import org.techtoledo.dao.EventsDAO;
 import org.techtoledo.domain.Event;
@@ -28,6 +25,7 @@ public class MainActivity extends DefaultActivity {
     private EventsDAO eventsDAO = new EventsDAO();
     private RecyclerView recyclerView;
     private EventsAdapter eAdapter;
+    private Date lastUpdateDate;
     private static final String TAG = "MainActivity";
 
     @Override
@@ -38,12 +36,53 @@ public class MainActivity extends DefaultActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        eventList = eventsDAO.getEventList();
-        //eventList = loadEvents();
+        //Set Last Updated Date
+        lastUpdateDate = new Date();
+
+        setEventList();
         Log.d(TAG, "Integer.toString(eventList.size()): " + Integer.toString(eventList.size()));
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        setEventsAdapter(eventList);
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d(TAG,"Activity Resumed");
+
+        Date currentDate = new Date();
+        if(currentDate.getTime() - lastUpdateDate.getTime() > 240 * 60 * 1000){
+            Log.d(TAG, "Activity Resumed: Get new feed");
+
+            //Get New Event List
+            setEventList();
+            setEventsAdapter(eventList);
+
+            //Update last Update Date
+            lastUpdateDate = new Date();
+        }
+        else if(currentDate.getTime() - lastUpdateDate.getTime() > 30 * 60 * 1000){
+            Log.d(TAG, "Activity Resumed: Remove past event from current feed");
+
+            //Remove any events that have ended
+            for(int x = 0; x < eventList.size(); x++){
+                if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
+                    eventList.remove(x);
+                }
+            }
+            setEventsAdapter(eventList);
+        }
+    }
+
+    private void setEventList(){
+        this.eventList = eventsDAO.getEventList();
+        //eventList = loadEvents();
+    }
+
+    private void setEventsAdapter(List<Event> eventList){
         eAdapter = new EventsAdapter(eventList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
