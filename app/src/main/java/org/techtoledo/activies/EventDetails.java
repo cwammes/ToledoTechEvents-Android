@@ -1,25 +1,31 @@
 package org.techtoledo.activies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import toledotechevets.org.toledotech.R;
 
+import org.jsoup.nodes.Element;
 import org.techtoledo.domain.Event;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class EventDetails extends DefaultActivity {
 
     private static final String TAG = "EventDetails";
+    private URL rsvpUrl;
+    private Button rsvpButton;
 
 
     @Override
@@ -46,6 +52,25 @@ public class EventDetails extends DefaultActivity {
 
         TextView eventDescription = (TextView)findViewById(R.id.event_description);
         eventDescription.setText(event.getDescription());
+
+        //Has an event URL
+        rsvpButton = (Button) findViewById(R.id.rsvp_button);
+        //Hide RSVP Button
+        Log.d(TAG, "Hide rsvpButton");
+        rsvpButton.setVisibility(View.GONE);
+        if(event.getUid() != null && event.getUid().compareTo("") != 0){
+            try{
+                rsvpUrl = getRsvpUrl(new URL(event.getUid()));
+                if(rsvpUrl != null){
+                    Log.d(TAG, "RSVP: " + rsvpUrl.toString());
+                    rsvpButton.setVisibility(View.VISIBLE);
+                }
+            }
+            catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+
+        }
     }
 
     private String getEventDate(Date startTime, Date endTime){
@@ -75,6 +100,37 @@ public class EventDetails extends DefaultActivity {
         }
 
         return myDate;
+    }
+
+    private URL getRsvpUrl(URL eventURL){
+
+
+        try {
+            Document doc = Jsoup.connect(eventURL.toString()).get();
+            Elements detailsHeader = doc.select("#event_details h3");
+            for(int x = 0; x < detailsHeader.size(); x++) {
+                if (detailsHeader.get(x).text().compareToIgnoreCase("RSVP/Register:") == 0) {
+                    Element link = detailsHeader.get(x).nextElementSibling();
+                    //Elements link = doc.select("#event_details a");
+                    return new URL(link.attr("href"));
+                }
+            }
+
+        }
+        catch(Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
+    public void rsvpEvent(View view)
+    {
+        //Open Browser with RSVP URL
+        Log.d(TAG, "Open in Browser: " + rsvpUrl.toString());
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(rsvpUrl.toString()));
+        startActivity(browserIntent);
+
     }
 
 }

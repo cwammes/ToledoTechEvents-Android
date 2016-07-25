@@ -78,6 +78,7 @@ public class EventsDAO {
                 myEvent.setLocation(event.getLocation().getValue());
                 myEvent.setStartTime(event.getDateStart().getValue());
                 myEvent.setEndTime(event.getDateEnd().getValue());
+                myEvent.setUid(event.getUid().getValue());
 
                 //Get Location Info
                 if(event.getLocation().getValue().indexOf(":") > 0) {

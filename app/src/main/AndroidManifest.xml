@@ -20,10 +20,10 @@
         </activity>
         <activity
             android:name="org.techtoledo.activies.EventDetails"
-            android:label="@string/title_activity_event_details"></activity>
+            android:label="@string/title_activity_event_details" />
         <activity
             android:name="org.techtoledo.activies.AboutTechToledo"
-            android:label="@string/title_activity_event_details"></activity>
+            android:label="@string/title_activity_event_details" />
     </application>
 
 </manifest>

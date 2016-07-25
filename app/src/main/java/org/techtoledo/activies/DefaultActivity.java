@@ -16,4 +16,10 @@ public class DefaultActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void endEvent(View view)
+    {
+        //End Activity
+        finish();
+    }
+
 }
