@@ -1,10 +1,16 @@
 package org.techtoledo.dao;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,8 +27,9 @@ import biweekly.component.VEvent;
 public class EventsDAO {
 
     private static final String TAG = "Get Events ICS Feed";
+    private static final String cacheFile = "eventCache.ics";
 
-    public ArrayList<Event> getEventList(){
+    public ArrayList<Event> getEventList(Context context){
         ArrayList<Event> eventList = new ArrayList<Event>();
         String urlStr = "http://toledotechevents.org/events.ics";
         URL url;
@@ -33,14 +40,29 @@ public class EventsDAO {
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
+
 
             InputStream is = connection.getInputStream();
-            eventList = setEventList(is);
-            Log.d(TAG, "ArrayList Size: " + eventList.size());
+            int httpResponseCode = connection.getResponseCode();
+
+            //Got Response 200 Response
+            if(httpResponseCode == 200) {
+                String str = processInputStream(is);
+                eventList = setEventList(str);
+                Log.d(TAG, "ArrayList Size: " + eventList.size());
+                setCachedEvents(str, context);
+            }
+            //Not a 200 Response
+            else{
+                eventList = getCachedEvents(context);
+            }
         }
         catch(Exception e){
             Log.e(TAG, "Error");
             e.printStackTrace();
+            eventList = getCachedEvents(context);
         }
         finally{
             if(connection != null){
@@ -52,19 +74,10 @@ public class EventsDAO {
 
     }
 
-    private ArrayList<Event> setEventList(InputStream is){
+    private ArrayList<Event> setEventList(String str){
 
         ArrayList<Event> eventList = new ArrayList<Event>();
         try {
-
-            StringBuilder result = new StringBuilder();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = rd.readLine()) != null) {
-                result.append(line + "\n");
-            }
-            rd.close();
-            String str =  result.toString();
 
             ICalendar ical = Biweekly.parse(str).first();
 
@@ -106,6 +119,56 @@ public class EventsDAO {
             System.out.println(e);
         }
         return eventList;
+    }
+
+    private void setCachedEvents(String outputStr, Context context){
+
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(cacheFile, Context.MODE_PRIVATE));
+            outputStreamWriter.write(outputStr);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e(TAG, "File write failed: " + e.toString());
+        }
+
+    }
+
+    private ArrayList<Event> getCachedEvents(Context context){
+
+        ArrayList<Event> eventList;
+        try {
+            FileInputStream fin = context.openFileInput(cacheFile);
+            String fileString = processInputStream(fin);
+            eventList = setEventList(fileString);
+            return eventList;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private String processInputStream(InputStream is){
+
+        String returnStr = "";
+
+
+        String line;
+        try {
+            StringBuilder result = new StringBuilder();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            while ((line = rd.readLine()) != null) {
+                result.append(line + "\n");
+            }
+            rd.close();
+            returnStr =  result.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return returnStr;
     }
 
 }

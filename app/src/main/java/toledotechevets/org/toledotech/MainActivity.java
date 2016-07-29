@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 
 public class MainActivity extends DefaultActivity {
 
@@ -78,7 +76,7 @@ public class MainActivity extends DefaultActivity {
     }
 
     private void setEventList(){
-        this.eventList = eventsDAO.getEventList();
+        this.eventList = eventsDAO.getEventList(getApplicationContext());
         //eventList = loadEvents();
     }
 
