@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,8 +42,8 @@ public class EventsDAO {
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            //connection.setConnectTimeout(3000);
+            //connection.setReadTimeout(3000);
 
 
             InputStream is = connection.getInputStream();
@@ -84,37 +85,11 @@ public class EventsDAO {
 
             Log.e(TAG, "ical.getEvents().size():" + ical.getEvents().size());
             for(int x = 0; x < ical.getEvents().size(); x++){
-                Event myEvent = new Event();
-                VEvent event = ical.getEvents().get(x);
-
-                myEvent.setDescription(event.getDescription().getValue());
-                myEvent.setSummary(event.getSummary().getValue());
-                myEvent.setLocation(event.getLocation().getValue());
-                myEvent.setStartTime(event.getDateStart().getValue());
-                myEvent.setEndTime(event.getDateEnd().getValue());
-                myEvent.setUid(event.getUid().getValue());
-
-                //Get Location Info
-                if(event.getLocation().getValue().indexOf(":") > 0) {
-                    myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
-                    myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":"), event.getLocation().getValue().length()));
-                }
-                else {
-                    myEvent.setLocationShort("TBD");
-                    myEvent.setLocationAddress("");
-                }
-
-                //Get URL
-                if(event.getUrl() != null){
-                    myEvent.setEventURL(new URL(event.getUrl().getValue()));
-                }
-                else{
-                    //myEvent.setEventURL(new URL(""));
-                }
+                Event myEvent = getEvent(ical, x);
 
                 //Only add future events to the list
                 Date currentDate = new Date();
-                if(currentDate.getTime() < myEvent.getEndTime().getTime()) {
+                if(myEvent != null && currentDate.getTime() < myEvent.getEndTime().getTime()) {
                     eventList.add(myEvent);
                 }
             }
@@ -174,6 +149,43 @@ public class EventsDAO {
         }
 
         return returnStr;
+    }
+
+    private Event getEvent(ICalendar ical, int counter) {
+        try {
+            Event myEvent = new Event();
+            VEvent event = ical.getEvents().get(counter);
+
+            myEvent.setDescription(event.getDescription().getValue());
+            myEvent.setSummary(event.getSummary().getValue());
+            myEvent.setLocation(event.getLocation().getValue());
+            myEvent.setStartTime(event.getDateStart().getValue());
+            myEvent.setEndTime(event.getDateEnd().getValue());
+            myEvent.setUid(event.getUid().getValue());
+
+            //Get Location Info
+            if (event.getLocation().getValue().indexOf(":") > 0) {
+                myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
+                myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":"), event.getLocation().getValue().length()));
+            } else {
+                myEvent.setLocationShort("TBD");
+                myEvent.setLocationAddress("");
+            }
+
+            //Get URL
+            if (event.getUrl() != null) {
+                myEvent.setEventURL(new URL(event.getUrl().getValue()));
+            } else {
+                //myEvent.setEventURL(new URL(""));
+            }
+
+            return myEvent;
+        }
+        catch (Exception e){
+            Log.e(TAG, "File write failed: " + e.toString());
+        }
+
+        return null;
     }
 
 }
