@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.techtoledo.domain.Event;
 
@@ -111,7 +112,11 @@ public class EventsDAO {
                     //myEvent.setEventURL(new URL(""));
                 }
 
-                eventList.add(myEvent);
+                //Only add future events to the list
+                Date currentDate = new Date();
+                if(currentDate.getTime() < myEvent.getEndTime().getTime()) {
+                    eventList.add(myEvent);
+                }
             }
 
         }
