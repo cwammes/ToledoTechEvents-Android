@@ -42,8 +42,8 @@ public class EventsDAO {
             url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            //connection.setConnectTimeout(3000);
-            //connection.setReadTimeout(3000);
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
 
 
             InputStream is = connection.getInputStream();

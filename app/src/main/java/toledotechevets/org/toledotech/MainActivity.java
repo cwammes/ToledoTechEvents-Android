@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import org.techtoledo.activies.DefaultActivity;
 import org.techtoledo.dao.EventsDAO;
 import org.techtoledo.domain.Event;
+import org.techtoledo.service.SearchService;
 import org.techtoledo.view.EventsAdapter;
 
 import java.util.ArrayList;
@@ -16,12 +17,14 @@ import java.util.Date;
 import java.util.List;
 
 import android.util.Log;
+import android.widget.SearchView;
 
-public class MainActivity extends DefaultActivity {
+public class MainActivity extends DefaultActivity implements SearchView.OnQueryTextListener {
 
     private List<Event> eventList = new ArrayList<>();
     private EventsDAO eventsDAO = new EventsDAO();
     private RecyclerView recyclerView;
+    private SearchView searchView;
     private EventsAdapter eAdapter;
     private Date lastUpdateDate;
     private static final String TAG = "MainActivity";
@@ -41,6 +44,10 @@ public class MainActivity extends DefaultActivity {
         Log.d(TAG, "Integer.toString(eventList.size()): " + Integer.toString(eventList.size()));
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        searchView = (SearchView) findViewById(R.id.search_view);
+
+        searchView.setOnQueryTextListener(this);
+        searchView.setSubmitButtonEnabled(true);
 
         setEventsAdapter(eventList);
 
@@ -87,6 +94,31 @@ public class MainActivity extends DefaultActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(eAdapter);
     }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        Log.d(TAG, "onQueryTextSubmit: " + query);
+        SearchService searchService = new SearchService();
+        setEventsAdapter(searchService.search(query, eventList));
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText)
+    {
+
+        //Reset results
+        if(newText != null && newText.isEmpty()){
+            setEventsAdapter(eventList);
+        }
+
+        Log.d(TAG, "onQueryTextChange: " + newText);
+        return true;
+    }
+
+
 
     private ArrayList<Event> loadEvents(){
         ArrayList<Event> eventList = new ArrayList<Event>();
