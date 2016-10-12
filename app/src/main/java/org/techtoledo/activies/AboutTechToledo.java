@@ -23,7 +23,9 @@ public class AboutTechToledo extends DefaultActivity {
 
         WebView webView = (WebView) findViewById(R.id.about_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://toledotechevents.org/about");
+
+        String hostname = getApplicationContext().getResources().getString(R.string.calendar_hostname);
+        webView.loadUrl(hostname + "/about");
     }
 
     @Override

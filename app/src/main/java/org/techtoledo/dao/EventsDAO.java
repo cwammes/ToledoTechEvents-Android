@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -22,6 +23,7 @@ import org.techtoledo.domain.Event;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
+import toledotechevets.org.toledotech.R;
 
 /**
  * Created by cwammes on 6/16/16.
@@ -33,7 +35,9 @@ public class EventsDAO {
 
     public ArrayList<Event> getEventList(Context context){
         ArrayList<Event> eventList = new ArrayList<Event>();
-        String urlStr = "http://toledotechevents.org/events.ics";
+
+        String hostname = context.getResources().getString(R.string.calendar_hostname);
+        String urlStr = hostname + "/events.ics";
         URL url;
 
         HttpURLConnection connection = null;
@@ -135,14 +139,26 @@ public class EventsDAO {
 
 
         String line;
+        String prevLine = "";
         try {
             StringBuilder result = new StringBuilder();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             while ((line = rd.readLine()) != null) {
+
+                //Fix issue with location not showing up
+                if(line.contains("SEQUENCE:") && !prevLine.contains("LOCATION:"))
+                    result.append("LOCATION: TBD\n");
+
+                //Fix encoding issues coming from Calagator
+                line = URLDecoder.decode(line, "ASCII");
+                line = line.replace("&#13\\;", "");
+
                 result.append(line + "\n");
+                prevLine = line;
             }
             rd.close();
             returnStr =  result.toString();
+            //Log.d(TAG, result.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,6 +172,7 @@ public class EventsDAO {
             Event myEvent = new Event();
             VEvent event = ical.getEvents().get(counter);
 
+            //Log.d(TAG, "Description: \n" + event.getDescription().getValue());
             myEvent.setDescription(event.getDescription().getValue());
             myEvent.setSummary(event.getSummary().getValue());
             myEvent.setLocation(event.getLocation().getValue());
