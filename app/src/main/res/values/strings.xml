@@ -2,5 +2,5 @@
     <string name="app_name">Toledo Tech</string>
     <string name="title_activity_event_details">EventDetails</string>
     <string name="title_activity_test">TestActivity</string>
-    <string name="calendar_hostname">http://devel.toledotechevents.org</string>
+    <string name="calendar_hostname">http://toledotechevents.org</string>
 </resources>
