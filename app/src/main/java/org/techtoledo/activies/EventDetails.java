@@ -1,5 +1,6 @@
 package org.techtoledo.activies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +27,9 @@ public class EventDetails extends DefaultActivity {
     private static final String TAG = "EventDetails";
     private URL rsvpUrl;
     private Button rsvpButton;
-
+    private Button webButton;
+    private Button mapButton;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,7 @@ public class EventDetails extends DefaultActivity {
         //setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        Event event = (Event)intent.getSerializableExtra("Event");
+         event = (Event)intent.getSerializableExtra("Event");
 
         Log.d(TAG, event.getSummary());
 
@@ -71,6 +74,19 @@ public class EventDetails extends DefaultActivity {
             }
 
         }
+
+        //Check for URL and set url if there; hide button if no url
+        if(event.getEventURL() == null || event.getEventURL().toString().isEmpty()){
+            webButton = (Button) findViewById(R.id.web);
+            webButton.setVisibility(View.GONE);
+        }
+
+        //Check for address
+        if(event.getLocationAddress() == null || event.getLocationAddress().isEmpty()){
+            mapButton = (Button) findViewById(R.id.Map);
+            mapButton.setVisibility(View.GONE);
+        }
+
     }
 
     private String getEventDate(Date startTime, Date endTime){
@@ -131,6 +147,31 @@ public class EventDetails extends DefaultActivity {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(rsvpUrl.toString()));
         startActivity(browserIntent);
 
+    }
+
+    public void openWebBrowser(View view){
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getEventURL().toString()));
+        startActivity(browserIntent);
+    }
+
+    public void addToCalendar(View view){
+
+
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+        intent.putExtra("beginTime", event.getStartTime().getTime());
+        intent.putExtra("endTime", event.getEndTime().getTime());
+        intent.putExtra("title", event.getSummary());
+        intent.putExtra("eventLocation", event.getLocationAddress());
+        startActivity(intent);
+    }
+
+    public void openMap(View view){
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + event.getLocationAddress());
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
 }

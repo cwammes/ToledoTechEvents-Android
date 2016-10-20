@@ -183,7 +183,7 @@ public class EventsDAO {
             //Get Location Info
             if (event.getLocation().getValue().indexOf(":") > 0) {
                 myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
-                myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":"), event.getLocation().getValue().length()));
+                myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":") + 1, event.getLocation().getValue().length()).trim());
             } else {
                 myEvent.setLocationShort("TBD");
                 myEvent.setLocationAddress("");

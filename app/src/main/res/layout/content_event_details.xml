@@ -21,19 +21,54 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/rsvp_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="RSVP"
-                android:onClick="rsvpEvent"
-                />
+            <LinearLayout
+                android:id="@+id/event_details_toolbar"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/rsvp_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="RSVP"
+                    android:onClick="rsvpEvent"
+                    />
+
+                <Button
+                    android:id="@+id/add_to_calendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Calendar"
+                    android:onClick="addToCalendar"
+                    />
+
+                <Button
+                    android:id="@+id/web"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="Web"
+                    android:onClick="openWebBrowser"
+                    />
+
+                <Button
+                    android:id="@+id/Map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="Map"
+                    android:onClick="openMap"
+                    />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/event_title"
+                android:layout_below="@id/event_details_toolbar"
                 android:textStyle="bold"
-                android:layout_below="@id/rsvp_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -63,6 +98,8 @@
                 android:layout_below="@id/event_description_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+
 
         </RelativeLayout>
 
