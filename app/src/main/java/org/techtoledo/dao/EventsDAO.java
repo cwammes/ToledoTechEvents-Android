@@ -25,9 +25,14 @@ import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import toledotechevets.org.toledotech.R;
 
+import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * Created by cwammes on 6/16/16.
  */
+
 public class EventsDAO {
 
     private static final String TAG = "Get Events ICS Feed";
@@ -37,7 +42,8 @@ public class EventsDAO {
         ArrayList<Event> eventList = new ArrayList<Event>();
 
         String hostname = context.getResources().getString(R.string.calendar_hostname);
-        String urlStr = hostname + "/events.ics";
+        //String urlStr = hostname + "/events.ics";
+        String urlStr = hostname + "/events.json";
         URL url;
 
         HttpURLConnection connection = null;
@@ -82,7 +88,12 @@ public class EventsDAO {
 
     private ArrayList<Event> setEventList(String str){
 
-        ArrayList<Event> eventList = new ArrayList<Event>();
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<Event>>(){}.getType();
+        ArrayList<Event> eventList = gson.fromJson(str, listType);
+
+        //ArrayList<Event> eventList = new ArrayList<Event>();
+        /*
         try {
 
             ICalendar ical = Biweekly.parse(str).first();
@@ -102,6 +113,7 @@ public class EventsDAO {
         catch(Exception e){
             System.out.println(e);
         }
+        */
         return eventList;
     }
 
@@ -167,42 +179,5 @@ public class EventsDAO {
         return returnStr;
     }
 
-    private Event getEvent(ICalendar ical, int counter) {
-        try {
-            Event myEvent = new Event();
-            VEvent event = ical.getEvents().get(counter);
-
-            //Log.d(TAG, "Description: \n" + event.getDescription().getValue());
-            myEvent.setDescription(event.getDescription().getValue());
-            myEvent.setSummary(event.getSummary().getValue());
-            myEvent.setLocation(event.getLocation().getValue());
-            myEvent.setStartTime(event.getDateStart().getValue());
-            myEvent.setEndTime(event.getDateEnd().getValue());
-            myEvent.setUid(event.getUid().getValue());
-
-            //Get Location Info
-            if (event.getLocation().getValue().indexOf(":") > 0) {
-                myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
-                myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":") + 1, event.getLocation().getValue().length()).trim());
-            } else {
-                myEvent.setLocationShort("TBD");
-                myEvent.setLocationAddress("");
-            }
-
-            //Get URL
-            if (event.getUrl() != null) {
-                myEvent.setEventURL(new URL(event.getUrl().getValue()));
-            } else {
-                //myEvent.setEventURL(new URL(""));
-            }
-
-            return myEvent;
-        }
-        catch (Exception e){
-            Log.e(TAG, "File write failed: " + e.toString());
-        }
-
-        return null;
-    }
 
 }
