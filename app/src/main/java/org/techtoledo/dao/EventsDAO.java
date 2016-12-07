@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.techtoledo.domain.Event;
+import org.techtoledo.domain.Venue;
 
-import biweekly.Biweekly;
-import biweekly.ICalendar;
-import biweekly.component.VEvent;
 import toledotechevets.org.toledotech.R;
 
 import com.google.gson.Gson;
@@ -92,28 +90,14 @@ public class EventsDAO {
         Type listType = new TypeToken<ArrayList<Event>>(){}.getType();
         ArrayList<Event> eventList = gson.fromJson(str, listType);
 
-        //ArrayList<Event> eventList = new ArrayList<Event>();
-        /*
-        try {
-
-            ICalendar ical = Biweekly.parse(str).first();
-
-            Log.e(TAG, "ical.getEvents().size():" + ical.getEvents().size());
-            for(int x = 0; x < ical.getEvents().size(); x++){
-                Event myEvent = getEvent(ical, x);
-
-                //Only add future events to the list
-                Date currentDate = new Date();
-                if(myEvent != null && currentDate.getTime() < myEvent.getEndTime().getTime()) {
-                    eventList.add(myEvent);
-                }
+        for(int x = 0; x < eventList.size(); x++){
+            if(eventList.get(x).getVenue() == null){
+                Venue tempVenue = new Venue();
+                tempVenue.setTitle("TBD");
+                eventList.get(x).setVenue(tempVenue);
             }
+        }
 
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-        */
         return eventList;
     }
 

@@ -51,10 +51,7 @@ public class EventDetails extends DefaultActivity {
         eventDate.setText(getEventDate(event.getStartTime(), event.getEndTime()));
 
         TextView eventLocationShort = (TextView) findViewById(R.id.event_location_short);
-        if(event.getVenue() != null)
-            eventLocationShort.setText(event.getVenue().getTitle());
-        else
-            eventLocationShort.setText("TBD");
+        eventLocationShort.setText(event.getVenue().getTitle());
 
         TextView eventDescription = (TextView)findViewById(R.id.event_description);
         eventDescription.setText(event.getDescription());
@@ -133,8 +130,7 @@ public class EventDetails extends DefaultActivity {
         intent.putExtra("beginTime", event.getStartTime().getTime());
         intent.putExtra("endTime", event.getEndTime().getTime());
         intent.putExtra("title", event.getSummary());
-        if(event.getVenue() != null)
-            intent.putExtra("eventLocation", event.getVenue().getAddress());
+        intent.putExtra("eventLocation", event.getVenue().getAddress());
         startActivity(intent);
     }
 
