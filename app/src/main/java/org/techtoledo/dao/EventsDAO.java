@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,11 +11,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.techtoledo.domain.Event;
 import org.techtoledo.domain.Venue;
@@ -40,7 +37,6 @@ public class EventsDAO {
         ArrayList<Event> eventList = new ArrayList<Event>();
 
         String hostname = context.getResources().getString(R.string.calendar_hostname);
-        //String urlStr = hostname + "/events.ics";
         String urlStr = hostname + "/events.json";
         URL url;
 
@@ -162,6 +158,5 @@ public class EventsDAO {
 
         return returnStr;
     }
-
 
 }
