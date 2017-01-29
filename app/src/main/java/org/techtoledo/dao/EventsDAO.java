@@ -34,6 +34,7 @@ public class EventsDAO {
 
     private static final String TAG = "Get Events ICS Feed";
     private static final String cacheFile = "eventCache.ics";
+    private ArrayList <Event> oldEvents;
 
     public ArrayList<Event> getEventList(Context context){
         ArrayList<Event> eventList = new ArrayList<Event>();
@@ -94,6 +95,8 @@ public class EventsDAO {
 
             //Remove events already passed, but still in feed
             if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
+
+                oldEvents.add(eventList.get(x));
                 eventList.remove(x);
             }
 
@@ -172,9 +175,16 @@ public class EventsDAO {
     public Event getEventById(Context context, int eventId){
         ArrayList<Event> eventList = getCachedEvents(context);
 
+        //Return Current Events
         for(int x = 0; x < eventList.size(); x++){
             if(eventList.get(x).getId() == eventId)
                 return eventList.get(x);
+        }
+
+        //Return Past Events
+        for(int x = 0; x < oldEvents.size(); x++){
+            if(oldEvents.get(x).getId() == eventId)
+                return oldEvents.get(x);
         }
 
         return null;
