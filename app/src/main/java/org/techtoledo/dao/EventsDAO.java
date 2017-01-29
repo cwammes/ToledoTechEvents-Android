@@ -22,6 +22,8 @@ import toledotechevets.org.toledotech.R;
 
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
+import java.util.Date;
+
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -86,7 +88,15 @@ public class EventsDAO {
         Type listType = new TypeToken<ArrayList<Event>>(){}.getType();
         ArrayList<Event> eventList = gson.fromJson(str, listType);
 
+        Date currentDate = new Date();
+
         for(int x = 0; x < eventList.size(); x++){
+
+            //Remove events already passed, but still in feed
+            if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
+                eventList.remove(x);
+            }
+
             if(eventList.get(x).getVenue() == null){
                 Venue tempVenue = new Venue();
                 tempVenue.setTitle("TBD");
@@ -157,6 +167,17 @@ public class EventsDAO {
         }
 
         return returnStr;
+    }
+
+    public Event getEventById(Context context, int eventId){
+        ArrayList<Event> eventList = getCachedEvents(context);
+
+        for(int x = 0; x < eventList.size(); x++){
+            if(eventList.get(x).getId() == eventId)
+                return eventList.get(x);
+        }
+
+        return null;
     }
 
 }

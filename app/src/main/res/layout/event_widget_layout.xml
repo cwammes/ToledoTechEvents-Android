@@ -10,19 +10,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left|top"
         android:gravity="left|top"
-        android:layout_margin="4dip"
-        android:text="Toledo Tech Events"
-        android:textStyle="normal|bold">
+        android:text="Toledo Tech Events | Upcoming"
+        android:textStyle="normal|bold"
+        android:textSize="18sp">
     </TextView>
-
-    <TextView
-        android:id="@+id/UpcomingEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dip"
-        android:text="Upcoming Events" >
-    </TextView>
-
 
     <ListView
         android:id="@+id/listView"
