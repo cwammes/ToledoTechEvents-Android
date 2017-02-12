@@ -10,8 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.widget.RemoteViews;
+
+import toledotechevets.org.toledotech.MainActivity;
 import toledotechevets.org.toledotech.R;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.techtoledo.activies.EventDetails;
 import org.techtoledo.domain.Event;
@@ -78,10 +81,12 @@ public class EventWidgetProvider extends AppWidgetProvider {
             Log.d(TAG, "onReceive eventId: " + eventId);
             Log.d(TAG, "onReceive event.getId(): " + event.getId());
 
-            final Intent eventDetailsIntent = new Intent(context, EventDetails.class);
+            Intent eventDetailsIntent = new Intent(context, EventDetails.class);
+            eventDetailsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             eventDetailsIntent.putExtra("Event", event);
 
             context.startActivity(eventDetailsIntent);
+
         }
         else if(intent.getAction().equals("android.appwidget.action.APPWIDGET_UPDATE")){
             Log.d(TAG, "onReceive: android.appwidget.action.APPWIDGET_UPDATE");
