@@ -78,6 +78,13 @@ public class EventDetails extends DefaultActivity {
 
     }
 
+    protected void onStop(){
+
+        finish();
+
+        super.onStop();
+    }
+
     private String getEventDate(Date startTime, Date endTime){
 
         SimpleDateFormat dateCompareFormatDate = new SimpleDateFormat("EEEE MMMM d, yyyy");
