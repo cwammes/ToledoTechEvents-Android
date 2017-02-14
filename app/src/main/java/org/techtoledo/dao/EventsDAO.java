@@ -88,6 +88,7 @@ public class EventsDAO {
         Gson gson = new Gson();
         Type listType = new TypeToken<ArrayList<Event>>(){}.getType();
         ArrayList<Event> eventList = gson.fromJson(str, listType);
+        oldEvents = new ArrayList<Event>();
 
         Date currentDate = new Date();
 

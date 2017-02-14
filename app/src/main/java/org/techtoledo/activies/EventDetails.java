@@ -1,6 +1,5 @@
 package org.techtoledo.activies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,16 +10,11 @@ import android.widget.TextView;
 
 import toledotechevets.org.toledotech.R;
 
-import org.jsoup.nodes.Element;
 import org.techtoledo.domain.Event;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 public class EventDetails extends DefaultActivity {
 
@@ -76,13 +70,6 @@ public class EventDetails extends DefaultActivity {
             mapButton.setVisibility(View.GONE);
         }
 
-    }
-
-    protected void onStop(){
-
-        finish();
-
-        super.onStop();
     }
 
     private String getEventDate(Date startTime, Date endTime){
