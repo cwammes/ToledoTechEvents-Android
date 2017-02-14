@@ -24,7 +24,8 @@
         </activity>
         <activity
             android:name="org.techtoledo.activies.EventDetails"
-            android:label="@string/title_activity_event_details" />
+            android:label="@string/title_activity_event_details"
+            android:launchMode="singleInstance"/>
         <activity
             android:name="org.techtoledo.activies.AboutTechToledo"
             android:label="@string/title_activity_event_details" />
