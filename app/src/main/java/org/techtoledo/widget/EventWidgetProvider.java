@@ -19,6 +19,7 @@ import android.widget.Toast;
 import org.techtoledo.activies.EventDetails;
 import org.techtoledo.domain.Event;
 import org.techtoledo.dao.EventsDAO;
+import org.techtoledo.service.CacheStatusService;
 
 /**
  * Created by chris on 12/30/16.
@@ -37,6 +38,8 @@ public class EventWidgetProvider extends AppWidgetProvider {
 
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisComponent);
 
+        CacheStatusService cacheStatusService = new CacheStatusService();
+
         for(int x = 0; x < allWidgetIds.length; x++){
 
             Intent intent = new Intent(context, EventWidgetService.class);
@@ -45,6 +48,7 @@ public class EventWidgetProvider extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.event_widget_layout);
             remoteViews.setRemoteAdapter(R.id.listView, intent);
+            remoteViews.setTextViewText(R.id.cacheStatus, "Last Updated: " + cacheStatusService.getCacheStatusDate(context));
 
             Intent clickIntent = new Intent(context, EventWidgetProvider.class);
             clickIntent.setAction(EventWidgetProvider.CLICK_ACTION);

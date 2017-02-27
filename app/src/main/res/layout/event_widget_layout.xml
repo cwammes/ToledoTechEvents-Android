@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/ToledoTechEvents"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left|top"
         android:gravity="left|top"
@@ -15,10 +15,18 @@
         android:textSize="18sp">
     </TextView>
 
+    <TextView
+        android:id="@+id/cacheStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </TextView>
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
+
+
 
 </LinearLayout>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import org.techtoledo.service.CacheStatusService;
+
 /**
  * Created by cwammes on 7/12/16.
  */
@@ -20,6 +22,14 @@ public class DefaultActivity extends AppCompatActivity {
     {
         //End Activity
         finish();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        CacheStatusService cacheStatusService = new CacheStatusService();
+        cacheStatusService.updateMaxCacheDate(getBaseContext());
     }
 
 }

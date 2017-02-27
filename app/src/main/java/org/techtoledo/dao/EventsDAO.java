@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import org.techtoledo.domain.Event;
 import org.techtoledo.domain.Venue;
+import org.techtoledo.service.CacheStatusService;
 
 import toledotechevets.org.toledotech.R;
 
@@ -37,49 +38,58 @@ public class EventsDAO {
     private ArrayList <Event> oldEvents;
 
     public ArrayList<Event> getEventList(Context context){
-        ArrayList<Event> eventList = new ArrayList<Event>();
 
-        String hostname = context.getResources().getString(R.string.calendar_hostname);
-        String urlStr = hostname + "/events.json";
-        URL url;
+        CacheStatusService cacheStatusService = new CacheStatusService();
+        if(cacheStatusService.hasCacheExpired(context) == true) {
 
-        HttpURLConnection connection = null;
-        Log.d(TAG, "urlStr: " + urlStr);
-        try{
-            url = new URL(urlStr);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            ArrayList<Event> eventList = new ArrayList<Event>();
+
+            String hostname = context.getResources().getString(R.string.calendar_hostname);
+            String urlStr = hostname + "/events.json";
+            URL url;
+
+            HttpURLConnection connection = null;
+            Log.d(TAG, "urlStr: " + urlStr);
+            try {
+                url = new URL(urlStr);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
 
 
-            InputStream is = connection.getInputStream();
-            int httpResponseCode = connection.getResponseCode();
+                InputStream is = connection.getInputStream();
+                int httpResponseCode = connection.getResponseCode();
 
-            //Got Response 200 Response
-            if(httpResponseCode == 200) {
-                String str = processInputStream(is);
-                eventList = setEventList(str);
-                Log.d(TAG, "ArrayList Size: " + eventList.size());
-                setCachedEvents(str, context);
-            }
-            //Not a 200 Response
-            else{
+                //Got Response 200 Response
+                if (httpResponseCode == 200) {
+                    String str = processInputStream(is);
+                    eventList = setEventList(str);
+                    Log.d(TAG, "ArrayList Size: " + eventList.size());
+                    setCachedEvents(str, context);
+                }
+                //Not a 200 Response
+                else {
+                    eventList = getCachedEvents(context);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error");
+                e.printStackTrace();
                 eventList = getCachedEvents(context);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
+
+            cacheStatusService.expireCache(context);
+            return eventList;
+
         }
-        catch(Exception e){
-            Log.e(TAG, "Error");
-            e.printStackTrace();
-            eventList = getCachedEvents(context);
-        }
-        finally{
-            if(connection != null){
-                connection.disconnect();
-            }
+        else{
+            return getCachedEvents(context);
         }
 
-        return eventList;
 
     }
 
