@@ -43,14 +43,27 @@ public class CacheStatusService {
 
     }
 
-    public void expireCache(Context context){
+    public void resetCacheStatus(Context context){
 
-        Log.d(TAG, "Expire Cache");
+        Log.d(TAG, "Reset Cache");
 
         CacheStatus cacheStatus = new CacheStatus();
         cacheStatus.setCacheDate(new Date());
         cacheStatus.setMinCacheDate(new Date(System.currentTimeMillis() + minCacheStatusLength));
         cacheStatus.setMaxCacheDate(new Date(System.currentTimeMillis() + maxCacheStatusLength));
+
+        //Save cacheStatus
+        this.cacheStatusDAO.setCacheStatus(context, cacheStatus);
+
+    }
+
+    public void expireCacheStatus(Context context){
+
+        Log.d(TAG, "Expire Cache");
+
+        CacheStatus cacheStatus = getCacheStatus(context);
+        cacheStatus.setMinCacheDate(cacheStatus.getCacheDate());
+        cacheStatus.setMaxCacheDate(cacheStatus.getCacheDate());
 
         //Save cacheStatus
         this.cacheStatusDAO.setCacheStatus(context, cacheStatus);

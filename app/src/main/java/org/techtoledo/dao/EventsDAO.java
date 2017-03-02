@@ -82,7 +82,7 @@ public class EventsDAO {
                 }
             }
 
-            cacheStatusService.expireCache(context);
+            cacheStatusService.resetCacheStatus(context);
             return eventList;
 
         }
