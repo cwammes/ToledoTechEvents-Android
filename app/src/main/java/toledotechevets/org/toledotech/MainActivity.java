@@ -1,7 +1,9 @@
 package toledotechevets.org.toledotech;
 
+import android.content.Intent;
 import android.os.StrictMode;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import org.techtoledo.activies.DefaultActivity;
 import org.techtoledo.dao.EventsDAO;
 import org.techtoledo.domain.Event;
+import org.techtoledo.service.CacheStatusService;
 import org.techtoledo.service.SearchService;
 import org.techtoledo.view.EventsAdapter;
+import org.techtoledo.widget.EventWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +30,7 @@ public class MainActivity extends DefaultActivity implements SearchView.OnQueryT
     private RecyclerView recyclerView;
     private SearchView searchView;
     private EventsAdapter eAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Date lastUpdateDate;
     private static final String TAG = "MainActivity";
 
@@ -45,6 +50,15 @@ public class MainActivity extends DefaultActivity implements SearchView.OnQueryT
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         searchView = (SearchView) findViewById(R.id.search_view);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+            @Override
+            public void onRefresh(){
+                refreshContent();
+            }
+
+        });
 
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(true);
@@ -116,6 +130,31 @@ public class MainActivity extends DefaultActivity implements SearchView.OnQueryT
 
         Log.d(TAG, "onQueryTextChange: " + newText);
         return true;
+    }
+
+    private void refreshContent(){
+
+        CacheStatusService cacheStatusService = new CacheStatusService();
+        cacheStatusService.expireCacheStatus(getApplicationContext());
+
+        Log.d(TAG, "refreshContent");
+
+        //Get New Event List
+        setEventList();
+        setEventsAdapter(eventList);
+
+        //Update last Update Date
+        lastUpdateDate = new Date();
+
+        //Update Widget
+        Intent updateWidget = new Intent(this, EventWidgetProvider.class);
+        updateWidget.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+
+        sendBroadcast(updateWidget);
+
+        //Done Refreshing
+        swipeRefreshLayout.setRefreshing(false);
+
     }
 
 

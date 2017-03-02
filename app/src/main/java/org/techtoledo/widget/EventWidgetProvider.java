@@ -99,6 +99,8 @@ public class EventWidgetProvider extends AppWidgetProvider {
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisComponent);
             Log.d(TAG, "appWidgetIds.length: " + appWidgetIds.length);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listView);
+
+            onUpdate(context, appWidgetManager, appWidgetIds);
         }
 
         super.onReceive(context, intent);
