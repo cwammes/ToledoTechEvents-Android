@@ -104,18 +104,22 @@ public class EventsDAO {
 
         for(int x = 0; x < eventList.size(); x++){
 
-            //Remove events already passed, but still in feed
-            if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
-
-                oldEvents.add(eventList.get(x));
-                eventList.remove(x);
-            }
-
             if(eventList.get(x).getVenue() == null){
                 Venue tempVenue = new Venue();
                 tempVenue.setTitle("TBD");
                 eventList.get(x).setVenue(tempVenue);
             }
+
+            //Remove events already passed, but still in feed
+            if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
+
+                Log.d(TAG, "setEventList -> remove  " + eventList.get(x).getSummary());
+                oldEvents.add(eventList.get(x));
+                eventList.remove(x);
+                x = x - 1;
+            }
+
+
         }
 
         return eventList;

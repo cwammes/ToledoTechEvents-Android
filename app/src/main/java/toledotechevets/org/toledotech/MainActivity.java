@@ -90,6 +90,7 @@ public class MainActivity extends DefaultActivity implements SearchView.OnQueryT
             for(int x = 0; x < eventList.size(); x++){
                 if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
                     eventList.remove(x);
+                    x = x - 1;
                 }
             }
             setEventsAdapter(eventList);

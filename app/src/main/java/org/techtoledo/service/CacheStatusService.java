@@ -15,7 +15,7 @@ import java.util.Date;
 public class CacheStatusService {
 
     private static final int minCacheStatusLength = 14400000;  // 4 hours
-    private static final int maxCacheStatusLength = 86400000;  // 1 day
+    private static final int maxCacheStatusLength = 432000000;  // 5 days
     private CacheStatusDAO cacheStatusDAO;
     private static final String TAG = "Cache Status Service";
 
