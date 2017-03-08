@@ -170,7 +170,7 @@ public class EventsDAO {
                     result.append("LOCATION: TBD\n");
 
                 //Fix encoding issues coming from Calagator
-                line = URLDecoder.decode(line, "ASCII");
+                //line = URLDecoder.decode(line, "ASCII");
                 line = line.replace("&#13\\;", "");
 
                 result.append(line + "\n");
