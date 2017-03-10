@@ -104,9 +104,9 @@ public class CacheStatusDAO {
     private CacheStatus createCacheStatus(){
 
         CacheStatus cacheStatus = new CacheStatus();
-        cacheStatus.setMaxCacheDate(new Date(System.currentTimeMillis() + 1000));
-        cacheStatus.setMinCacheDate(new Date(System.currentTimeMillis() + 1000));
-        cacheStatus.setCacheDate(new Date(System.currentTimeMillis() + 1000));
+        cacheStatus.setMaxCacheDate(new Date(System.currentTimeMillis() - 1000));
+        cacheStatus.setMinCacheDate(new Date(System.currentTimeMillis() - 1000));
+        cacheStatus.setCacheDate(new Date(System.currentTimeMillis()));
 
         return cacheStatus;
     }

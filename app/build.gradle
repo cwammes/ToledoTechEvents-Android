@@ -8,7 +8,7 @@ android {
         applicationId "toledotechevets.org.toledotech"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 15
+        versionCode 17
         versionName "1.1.0"
         archivesBaseName = "toledo-tech-events-$versionName"
     }
@@ -46,3 +46,5 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.google.code.gson:gson:2.8.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
