@@ -33,7 +33,7 @@ public class SearchService {
             }
 
             //Search Event Location
-            else if(eventList.get(x).getLocationShort().toLowerCase().contains(query.toLowerCase())){
+            else if(eventList.get(x).getVenue().getTitle().toLowerCase().contains(query.toLowerCase())){
                 resultList.add(eventList.get(x));
             }
 

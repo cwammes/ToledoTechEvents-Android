@@ -1,5 +1,7 @@
 package org.techtoledo.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
@@ -9,24 +11,26 @@ import java.util.Date;
  */
 public class Event implements Serializable {
 
-    Date startTime;
-    Date endTime;
-    String uid;
-    String description;
-    String summary;
-    String location;
-    String locationShort;
+    private int id;
 
-    public String getLocationAddress() {
-        return locationAddress;
-    }
+    @SerializedName("start_time")
+    private Date startTime;
 
-    public void setLocationAddress(String locationAddress) {
-        this.locationAddress = locationAddress;
-    }
+    @SerializedName("end_time")
+    private Date endTime;
 
-    String locationAddress;
-    URL eventURL;
+    private String uid;
+    private String description;
+
+    @SerializedName("title")
+    private String summary;
+    private Venue venue;
+
+    @SerializedName("rsvp_url")
+    private String rsvpUrl;
+
+    @SerializedName("url")
+    private String eventURL;
 
     public Date getStartTime() {
         return startTime;
@@ -68,23 +72,35 @@ public class Event implements Serializable {
         this.summary = summary;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public URL getEventURL() {
+    public String getEventURL() {
         return eventURL;
     }
 
-    public void setEventURL(URL eventURL) {
+    public void setEventURL(String eventURL) {
         this.eventURL = eventURL;
     }
 
-    public String getLocationShort() {return locationShort;}
+    public Venue getVenue() {
+        return venue;
+    }
 
-    public void setLocationShort(String locationShort) {this.locationShort = locationShort;}
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getRsvpUrl() {
+        return rsvpUrl;
+    }
+
+    public void setRsvpUrl(String rsvpUrl) {
+        this.rsvpUrl = rsvpUrl;
+    }
 }

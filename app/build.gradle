@@ -8,8 +8,8 @@ android {
         applicationId "toledotechevets.org.toledotech"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 16
-        versionName "1.0.2"
+        versionCode 18
+        versionName "1.1.0"
         archivesBaseName = "toledo-tech-events-$versionName"
     }
     buildTypes {
@@ -42,7 +42,12 @@ dependencies {
     //Libraries for ical4j
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'net.sf.biweekly:biweekly:0.4.6'
     compile 'com.android.support:design:23.4.0'
     compile 'org.jsoup:jsoup:1.9.2'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.firebase:firebase-crash:10.2.0'
+    compile 'com.google.firebase:firebase-core:10.2.0'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

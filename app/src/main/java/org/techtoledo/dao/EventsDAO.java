@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,96 +11,117 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.techtoledo.domain.Event;
+import org.techtoledo.domain.Venue;
+import org.techtoledo.service.CacheStatusService;
 
-import biweekly.Biweekly;
-import biweekly.ICalendar;
-import biweekly.component.VEvent;
 import toledotechevets.org.toledotech.R;
+
+import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import java.util.Date;
+
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Created by cwammes on 6/16/16.
  */
+
 public class EventsDAO {
 
     private static final String TAG = "Get Events ICS Feed";
     private static final String cacheFile = "eventCache.ics";
+    private ArrayList <Event> oldEvents;
 
     public ArrayList<Event> getEventList(Context context){
-        ArrayList<Event> eventList = new ArrayList<Event>();
 
-        String hostname = context.getResources().getString(R.string.calendar_hostname);
-        String urlStr = hostname + "/events.ics";
-        URL url;
+        CacheStatusService cacheStatusService = new CacheStatusService();
+        if(cacheStatusService.hasCacheExpired(context) == true) {
 
-        HttpURLConnection connection = null;
-        Log.d(TAG, "urlStr: " + urlStr);
-        try{
-            url = new URL(urlStr);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            ArrayList<Event> eventList = new ArrayList<Event>();
+
+            String hostname = context.getResources().getString(R.string.calendar_hostname);
+            String urlStr = hostname + "/events.json";
+            URL url;
+
+            HttpURLConnection connection = null;
+            Log.d(TAG, "urlStr: " + urlStr);
+            try {
+                url = new URL(urlStr);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
 
 
-            InputStream is = connection.getInputStream();
-            int httpResponseCode = connection.getResponseCode();
+                InputStream is = connection.getInputStream();
+                int httpResponseCode = connection.getResponseCode();
 
-            //Got Response 200 Response
-            if(httpResponseCode == 200) {
-                String str = processInputStream(is);
-                eventList = setEventList(str);
-                Log.d(TAG, "ArrayList Size: " + eventList.size());
-                setCachedEvents(str, context);
-            }
-            //Not a 200 Response
-            else{
+                //Got Response 200 Response
+                if (httpResponseCode == 200) {
+                    String str = processInputStream(is);
+                    eventList = setEventList(str);
+                    Log.d(TAG, "ArrayList Size: " + eventList.size());
+                    setCachedEvents(str, context);
+                }
+                //Not a 200 Response
+                else {
+                    eventList = getCachedEvents(context);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error");
+                e.printStackTrace();
                 eventList = getCachedEvents(context);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
+
+            cacheStatusService.resetCacheStatus(context);
+            return eventList;
+
         }
-        catch(Exception e){
-            Log.e(TAG, "Error");
-            e.printStackTrace();
-            eventList = getCachedEvents(context);
-        }
-        finally{
-            if(connection != null){
-                connection.disconnect();
-            }
+        else{
+            return getCachedEvents(context);
         }
 
-        return eventList;
 
     }
 
     private ArrayList<Event> setEventList(String str){
 
-        ArrayList<Event> eventList = new ArrayList<Event>();
-        try {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<ArrayList<Event>>(){}.getType();
+        ArrayList<Event> eventList = gson.fromJson(str, listType);
+        oldEvents = new ArrayList<Event>();
 
-            ICalendar ical = Biweekly.parse(str).first();
+        Date currentDate = new Date();
 
-            Log.e(TAG, "ical.getEvents().size():" + ical.getEvents().size());
-            for(int x = 0; x < ical.getEvents().size(); x++){
-                Event myEvent = getEvent(ical, x);
+        for(int x = 0; x < eventList.size(); x++){
 
-                //Only add future events to the list
-                Date currentDate = new Date();
-                if(myEvent != null && currentDate.getTime() < myEvent.getEndTime().getTime()) {
-                    eventList.add(myEvent);
-                }
+            if(eventList.get(x).getVenue() == null){
+                Venue tempVenue = new Venue();
+                tempVenue.setTitle("TBD");
+                eventList.get(x).setVenue(tempVenue);
             }
 
+            //Remove events already passed, but still in feed
+            if(currentDate.getTime() > eventList.get(x).getEndTime().getTime()){
+
+                Log.d(TAG, "setEventList -> remove  " + eventList.get(x).getSummary());
+                oldEvents.add(eventList.get(x));
+                eventList.remove(x);
+                x = x - 1;
+            }
+
+
         }
-        catch(Exception e){
-            System.out.println(e);
-        }
+
         return eventList;
     }
 
@@ -167,39 +187,19 @@ public class EventsDAO {
         return returnStr;
     }
 
-    private Event getEvent(ICalendar ical, int counter) {
-        try {
-            Event myEvent = new Event();
-            VEvent event = ical.getEvents().get(counter);
+    public Event getEventById(Context context, int eventId){
+        ArrayList<Event> eventList = getCachedEvents(context);
 
-            //Log.d(TAG, "Description: \n" + event.getDescription().getValue());
-            myEvent.setDescription(event.getDescription().getValue());
-            myEvent.setSummary(event.getSummary().getValue());
-            myEvent.setLocation(event.getLocation().getValue());
-            myEvent.setStartTime(event.getDateStart().getValue());
-            myEvent.setEndTime(event.getDateEnd().getValue());
-            myEvent.setUid(event.getUid().getValue());
-
-            //Get Location Info
-            if (event.getLocation().getValue().indexOf(":") > 0) {
-                myEvent.setLocationShort(event.getLocation().getValue().substring(0, event.getLocation().getValue().indexOf(":")));
-                myEvent.setLocationAddress(event.getLocation().getValue().substring(event.getLocation().getValue().indexOf(":") + 1, event.getLocation().getValue().length()).trim());
-            } else {
-                myEvent.setLocationShort("TBD");
-                myEvent.setLocationAddress("");
-            }
-
-            //Get URL
-            if (event.getUrl() != null) {
-                myEvent.setEventURL(new URL(event.getUrl().getValue()));
-            } else {
-                //myEvent.setEventURL(new URL(""));
-            }
-
-            return myEvent;
+        //Return Current Events
+        for(int x = 0; x < eventList.size(); x++){
+            if(eventList.get(x).getId() == eventId)
+                return eventList.get(x);
         }
-        catch (Exception e){
-            Log.e(TAG, "File write failed: " + e.toString());
+
+        //Return Past Events
+        for(int x = 0; x < oldEvents.size(); x++){
+            if(oldEvents.get(x).getId() == eventId)
+                return oldEvents.get(x);
         }
 
         return null;

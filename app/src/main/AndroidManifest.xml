@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <application
         android:allowBackup="true"
@@ -25,10 +24,27 @@
         </activity>
         <activity
             android:name="org.techtoledo.activies.EventDetails"
-            android:label="@string/title_activity_event_details" />
+            android:label="@string/title_activity_event_details"
+            android:launchMode="singleTop"/>
         <activity
             android:name="org.techtoledo.activies.AboutTechToledo"
             android:label="@string/title_activity_event_details" />
+
+        <receiver android:name="org.techtoledo.widget.EventWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/event_widget_info" />
+        </receiver>
+
+        <service android:name="org.techtoledo.widget.EventWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+
+        </service>
     </application>
 
 </manifest>

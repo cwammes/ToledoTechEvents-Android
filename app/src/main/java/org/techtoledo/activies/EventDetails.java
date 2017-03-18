@@ -1,6 +1,5 @@
 package org.techtoledo.activies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,16 +10,11 @@ import android.widget.TextView;
 
 import toledotechevets.org.toledotech.R;
 
-import org.jsoup.nodes.Element;
 import org.techtoledo.domain.Event;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 public class EventDetails extends DefaultActivity {
 
@@ -40,52 +34,8 @@ public class EventDetails extends DefaultActivity {
         //setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-         event = (Event)intent.getSerializableExtra("Event");
 
-        Log.d(TAG, event.getSummary());
-
-        TextView eventTitle = (TextView)findViewById(R.id.event_title);
-        eventTitle.setText(event.getSummary());
-
-        TextView eventDate = (TextView) findViewById(R.id.event_date);
-        eventDate.setText(getEventDate(event.getStartTime(), event.getEndTime()));
-
-        TextView eventLocationShort = (TextView) findViewById(R.id.event_location_short);
-        eventLocationShort.setText(event.getLocationShort());
-
-        TextView eventDescription = (TextView)findViewById(R.id.event_description);
-        eventDescription.setText(event.getDescription());
-
-        //Has an event URL
-        rsvpButton = (Button) findViewById(R.id.rsvp_button);
-        //Hide RSVP Button
-        Log.d(TAG, "Hide rsvpButton");
-        rsvpButton.setVisibility(View.GONE);
-        if(event.getUid() != null && event.getUid().compareTo("") != 0){
-            try{
-                rsvpUrl = getRsvpUrl(new URL(event.getUid()));
-                if(rsvpUrl != null){
-                    Log.d(TAG, "RSVP: " + rsvpUrl.toString());
-                    rsvpButton.setVisibility(View.VISIBLE);
-                }
-            }
-            catch(Exception e){
-                Log.e(TAG, e.getMessage());
-            }
-
-        }
-
-        //Check for URL and set url if there; hide button if no url
-        if(event.getEventURL() == null || event.getEventURL().toString().isEmpty()){
-            webButton = (Button) findViewById(R.id.web);
-            webButton.setVisibility(View.GONE);
-        }
-
-        //Check for address
-        if(event.getLocationAddress() == null || event.getLocationAddress().isEmpty()){
-            mapButton = (Button) findViewById(R.id.Map);
-            mapButton.setVisibility(View.GONE);
-        }
+        onNewIntent(intent);
 
     }
 
@@ -118,40 +68,18 @@ public class EventDetails extends DefaultActivity {
         return myDate;
     }
 
-    private URL getRsvpUrl(URL eventURL){
-
-
-        try {
-            Document doc = Jsoup.connect(eventURL.toString()).get();
-            Elements detailsHeader = doc.select("#event_details h3");
-            for(int x = 0; x < detailsHeader.size(); x++) {
-                if (detailsHeader.get(x).text().compareToIgnoreCase("RSVP/Register:") == 0) {
-                    Element link = detailsHeader.get(x).nextElementSibling();
-                    //Elements link = doc.select("#event_details a");
-                    return new URL(link.attr("href"));
-                }
-            }
-
-        }
-        catch(Exception e){
-            Log.e(TAG, e.getMessage());
-        }
-
-        return null;
-    }
-
     public void rsvpEvent(View view)
     {
         //Open Browser with RSVP URL
-        Log.d(TAG, "Open in Browser: " + rsvpUrl.toString());
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(rsvpUrl.toString()));
+        Log.d(TAG, "Open in Browser: " + event.getRsvpUrl());
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getRsvpUrl()));
         startActivity(browserIntent);
 
     }
 
     public void openWebBrowser(View view){
 
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getEventURL().toString()));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getEventURL()));
         startActivity(browserIntent);
     }
 
@@ -163,15 +91,55 @@ public class EventDetails extends DefaultActivity {
         intent.putExtra("beginTime", event.getStartTime().getTime());
         intent.putExtra("endTime", event.getEndTime().getTime());
         intent.putExtra("title", event.getSummary());
-        intent.putExtra("eventLocation", event.getLocationAddress());
+        intent.putExtra("eventLocation", event.getVenue().getAddress());
         startActivity(intent);
     }
 
     public void openMap(View view){
-        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + event.getLocationAddress());
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + event.getVenue().getAddress());
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        event = (Event)intent.getSerializableExtra("Event");
+
+        Log.d(TAG, event.getSummary());
+
+        TextView eventTitle = (TextView)findViewById(R.id.event_title);
+        eventTitle.setText(event.getSummary());
+
+        TextView eventDate = (TextView) findViewById(R.id.event_date);
+        eventDate.setText(getEventDate(event.getStartTime(), event.getEndTime()));
+
+        TextView eventLocationShort = (TextView) findViewById(R.id.event_location_short);
+        eventLocationShort.setText(event.getVenue().getTitle());
+
+        TextView eventDescription = (TextView)findViewById(R.id.event_description);
+        eventDescription.setText(event.getDescription());
+
+        //Has an event URL
+        //Hide RSVP Button
+
+        if(event.getRsvpUrl() == null || event.getRsvpUrl().isEmpty()){
+            rsvpButton = (Button) findViewById(R.id.rsvp_button);
+            rsvpButton.setVisibility(View.GONE);
+        }
+
+        //Check for URL and set url if there; hide button if no url
+        if(event.getEventURL() == null || event.getEventURL().isEmpty()){
+            webButton = (Button) findViewById(R.id.web);
+            webButton.setVisibility(View.GONE);
+        }
+
+        //Check for address
+        if(event.getVenue() == null || event.getVenue().getAddress() == null || event.getVenue().getAddress().isEmpty()){
+            mapButton = (Button) findViewById(R.id.Map);
+            mapButton.setVisibility(View.GONE);
+        }
+    }
 }
