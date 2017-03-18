@@ -48,7 +48,6 @@ public class EventWidgetProvider extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.event_widget_layout);
             remoteViews.setRemoteAdapter(R.id.listView, intent);
-            remoteViews.setTextViewText(R.id.cacheStatus, "Last Updated: " + cacheStatusService.getCacheStatusDate(context));
 
             Intent clickIntent = new Intent(context, EventWidgetProvider.class);
             clickIntent.setAction(EventWidgetProvider.CLICK_ACTION);

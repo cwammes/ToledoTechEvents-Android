@@ -15,12 +15,6 @@
         android:textSize="18sp">
     </TextView>
 
-    <TextView
-        android:id="@+id/cacheStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </TextView>
-
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
